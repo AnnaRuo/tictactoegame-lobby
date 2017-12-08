@@ -6,8 +6,7 @@ import { connect as subscribeToWebsocket } from '../actions/websocket'
 import JoinGameDialog from '../components/games/JoinGameDialog'
 
 const playerShape = PropTypes.shape({
-  userId: PropTypes.string.isRequired,
-  pairs: PropTypes.arrayOf(PropTypes.string).isRequired,
+  _id: PropTypes.string.isRequired,
   name: PropTypes.string
 })
 
@@ -55,6 +54,7 @@ class Game extends PureComponent {
   }
 
   render() {
+    console.log(this.props)
     const { game } = this.props
 
     if (!game) return null
@@ -81,7 +81,7 @@ class Game extends PureComponent {
 
 const mapStateToProps = ({ currentUser, games }, { match }) => {
   const game = games.filter((g) => (g._id === match.params.gameId))[0]
-  const currentPlayer = game && game.players.filter((p) => (p.userId === currentUser._id))[0]
+  const currentPlayer = game && game.players.filter((p) => (p._id === currentUser._id))[0]
 
   return {
     currentPlayer,

@@ -19,6 +19,7 @@ class JoinGameDialog extends PureComponent {
 
   render() {
     const { currentUser, open } = this.props
+    console.log(this.props)
 
     const actions = [
       <Link to="/">
@@ -52,7 +53,7 @@ class JoinGameDialog extends PureComponent {
 
 const mapStateToProps = ({ currentUser, games }, { gameId }) => {
   const game = games.filter((g) => (g._id === gameId))[0]
-  const isPlayer = game && game.players.filter((p) => (p.userId === currentUser._id)) > 0
+  const isPlayer = game && game.players.filter((p) => (p._id === currentUser._id || p === currentUser._id)).length > 0
 
   return {
     game,

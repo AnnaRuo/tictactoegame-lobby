@@ -28,11 +28,13 @@ class Game extends PureComponent {
       createdAt: PropTypes.string.isRequired,
       started: PropTypes.bool,
       turn: PropTypes.number.isRequired,
+      tictactoe: PropTypes.arrayOf(PropTypes.string),
     }),
     currentPlayer: playerShape,
     isPlayer: PropTypes.bool,
     isJoinable: PropTypes.bool,
-    hasTurn: PropTypes.bool
+    hasTurn: PropTypes.bool,
+
   }
 
   componentWillMount() {
@@ -51,6 +53,18 @@ class Game extends PureComponent {
     }
   }
 
+  takeTile = index => () => {
+    const {game} = this.props
+    this.props.dispatch({
+      type: 'TAKE_TILE',
+      payload: {index, game}
+    })
+  }
+
+  renderTile = (index, value) => {
+    return <Tile key={index} onClick={this.takeTile(index)} value={value} />
+  }
+
   render() {
     const { game } = this.props
     if (!game) return null
@@ -64,6 +78,7 @@ class Game extends PureComponent {
         <h1>TIC TAC TOES </h1>
         <p>{title}</p>
       <JoinGameDialog gameId={game._id} />
+      {this.props.game.tictactoe.map(this.renderTile)}
       </div>
     )
   }

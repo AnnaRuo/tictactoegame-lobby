@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import { fetchOneGame, fetchPlayers } from '../actions/games/fetch'
 import { connect as subscribeToWebsocket } from '../actions/websocket'
 import JoinGameDialog from '../components/games/JoinGameDialog'
+import Tile from '../components/games/Tile'
+import TicTacToe from './TicTacToe.js'
 
 const playerShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
@@ -11,6 +13,8 @@ const playerShape = PropTypes.shape({
 })
 
 class Game extends PureComponent {
+
+
   static propTypes = {
     fetchOneGame: PropTypes.func.isRequired,
     fetchPlayers: PropTypes.func.isRequired,
@@ -24,17 +28,13 @@ class Game extends PureComponent {
       createdAt: PropTypes.string.isRequired,
       started: PropTypes.bool,
       turn: PropTypes.number.isRequired,
-      cards: PropTypes.arrayOf(PropTypes.shape({
-        symbol: PropTypes.string,
-        _id: PropTypes.string,
-        won: PropTypes.bool,
-        visible: PropTypes.bool
-      }))
+      tictactoe: PropTypes.arrayOf(PropTypes.string),
     }),
     currentPlayer: playerShape,
     isPlayer: PropTypes.bool,
     isJoinable: PropTypes.bool,
-    hasTurn: PropTypes.bool
+    hasTurn: PropTypes.bool,
+
   }
 
   componentWillMount() {
@@ -53,27 +53,32 @@ class Game extends PureComponent {
     }
   }
 
-  render() {
-    console.log(this.props)
-    const { game } = this.props
+  takeTile = index => () => {
+    const {game} = this.props
+    this.props.dispatch({
+      type: 'TAKE_TILE',
+      payload: {index, game}
+    })
+  }
 
+  renderTile = (index, value) => {
+    return <Tile key={index} onClick={this.takeTile(index)} value={value} />
+  }
+
+  render() {
+    const { game } = this.props
     if (!game) return null
 
     const title = game.players.map(p => (p.name || null))
-      .filter(n => !!n)
-      .join(' vs ')
+         .filter(n => !!n)
+         .join(' vs ')
 
-    return (
+      return (
       <div className="Game">
-        <h1>Game!</h1>
+        <h1>TIC TAC TOES </h1>
         <p>{title}</p>
-
-        <h1>YOUR GAME HERE! :)</h1>
-
-        <h2>Debug Props</h2>
-        <pre>{JSON.stringify(this.props, true, 2)}</pre>
-
-        <JoinGameDialog gameId={game._id} />
+      <JoinGameDialog gameId={game._id} />
+      {this.props.game.tictactoe.map(this.renderTile)}
       </div>
     )
   }

@@ -5,6 +5,8 @@ import { fetchOneGame, fetchPlayers } from '../actions/games/fetch'
 import { connect as subscribeToWebsocket } from '../actions/websocket'
 import JoinGameDialog from '../components/games/JoinGameDialog'
 import Tile from '../components/games/Tile'
+import './Game.css'
+import { take_tile } from '../actions/games/take_tile'
 import TicTacToe from './TicTacToe.js'
 
 const playerShape = PropTypes.shape({
@@ -53,16 +55,14 @@ class Game extends PureComponent {
     }
   }
 
-  takeTile = index => () => {
+  take_tile = value => () => {
     const {game} = this.props
-    this.props.dispatch({
-      type: 'TAKE_TILE',
-      payload: {index, game}
-    })
+    console.log(value)
+    this.props.take_tile(game, value, this.props.currentPlayer)
   }
 
-  renderTile = (index, value) => {
-    return <Tile key={index} onClick={this.takeTile(index)} value={value} />
+  renderTile = (value, index) => {
+    return <Tile key={index} onClick={this.take_tile(index)} value={value} />
   }
 
   render() {
@@ -77,8 +77,10 @@ class Game extends PureComponent {
       <div className="Game">
         <h1>TIC TAC TOES </h1>
         <p>{title}</p>
-      <JoinGameDialog gameId={game._id} />
-      {this.props.game.tictactoe.map(this.renderTile)}
+        <JoinGameDialog gameId={game._id} />
+          <div className="GameBoard">
+          {this.props.game.tictactoe.map(this.renderTile)}
+          </div>
       </div>
     )
   }
@@ -100,5 +102,6 @@ const mapStateToProps = ({ currentUser, games }, { match }) => {
 export default connect(mapStateToProps, {
   subscribeToWebsocket,
   fetchOneGame,
-  fetchPlayers
+  fetchPlayers,
+  take_tile: take_tile,
 })(Game)
